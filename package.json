@@ -1,0 +1,18 @@
+{
+  "name": "cac-game",
+  "version": "1.0.0",
+  "description": "A game for the congressional app challenge.",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "firebase": "^6.5.0",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Alex Loan and Audrey Loan",
+  "license": "ISC"
+}
