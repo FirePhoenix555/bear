@@ -718,6 +718,7 @@ function updateFish() {
                 fishes[i].hide();
                 fishes.splice(i, 1);
                 player.health += 0.5 + waterLevel / 10;
+                player.score += 10;
             }
         } else {
             fishes[i].hide();

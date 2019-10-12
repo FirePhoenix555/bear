@@ -67,11 +67,11 @@ class Player {
         // stroke(0);
         // rect(this.x, this.y, SIZE, SIZE);
 
-        let w = 50;
-        let h = 50;
+        let w = 35;
+        let h = 35;
 
         SPRITES[this.si].show();
-        SPRITES[this.si].position(this.x - (SIZE * (w / 25) / 2), this.y - (SIZE * ((h / 25) + 1) / 2));
+        SPRITES[this.si].position(this.x - (SIZE * (w / 25) / 2), this.y - (SIZE * ((h / 25) + 1) / 2 - 5));
         SPRITES[this.si].style("z-index", "10");
         SPRITES[this.si].style("width", w + "px");
         SPRITES[this.si].style("height", h + "px");
