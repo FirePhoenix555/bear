@@ -14,7 +14,6 @@ OPTIONAL
 NOT OPTIONAL
 - how to play (ADD 'click to skip animations')
 - polish
-- github
 - submit
 */
 
@@ -598,6 +597,10 @@ function updateMother(){
                 year++;
                 setScore += 1000;
                 mother = null;
+
+                if (year > totalYears) {
+                    player.health = -1;
+                }
             }
         }
     }
