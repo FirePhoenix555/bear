@@ -1,8 +1,9 @@
+require("dotenv").config()
 
 const express = require('express');
 const firebase = require('firebase');
 const app = express();
-const server = app.listen(3000);
+const server = app.listen(process.env.PORT || 3000);
 const socket = require('socket.io');
 const io = socket(server);
 
@@ -60,14 +61,14 @@ function saveScore(data) {
     scoreRef.set(scores);
 }
 
-const firebaseConfig = {
-    apiKey: "AIzaSyDcg9L6wzN77Fsjj1UKX1cWvWqW-sPyV0U",
-    authDomain: "bear-98732.firebaseapp.com",
-    databaseURL: "https://bear-98732.firebaseio.com",
-    projectId: "bear-98732",
-    storageBucket: "bear-98732.appspot.com",
-    messagingSenderId: "636832213365",
-    appId: "1:636832213365:web:18eaa1c696254650"
+const firebaseConfig = { //process.env.
+    apiKey: process.env.API_KEY,
+    authDomain: process.env.AUTH_DOMAIN,
+    databaseURL: process.env.DATABASE_URL,
+    projectId: process.env.PROJECT_ID,
+    storageBucket: process.env.STORAGE_BUCKET,
+    messagingSenderId: process.env.MESSAGING_SENDER_ID,
+    appId: process.env.APP_ID
 };
 
 firebase.initializeApp(firebaseConfig);
