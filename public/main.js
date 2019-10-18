@@ -233,7 +233,7 @@ function draw() {
 
             fill(0);
             textAlign(CENTER, CENTER);
-            text("Bear", width / 2, (height / 2 - 100) / 2);
+            text("On Thin Ice", width / 2, (height / 2 - 100) / 2);
 
             textSize(15);
             text("By Alex Loan and Audrey Loan", width / 2, (height / 2 - 100) / 2 + 50);
