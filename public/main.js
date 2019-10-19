@@ -605,7 +605,7 @@ function updateMother(){
     if (mother !== null){
         if (mother.tx === tx){
             drawImage(motherImg, mother.i*SIZE,mother.j*SIZE - motherImg.height / 2,2);
-            if (mother.i*SIZE === player.x && mother.j*SIZE === player.y){
+            if (mother.i*SIZE === player.x && (mother.j*SIZE === player.y || (mother.j - 1)*SIZE === player.y)){
                 setWaterLevel = true;
                 wlr *= 1.125;
                 year++;
