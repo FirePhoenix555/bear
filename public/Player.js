@@ -133,6 +133,8 @@ class Player {
         } else {
             // UNCOMMENT THAT TO REVERT BACK TO HEALTH LOSS ON ICE
             // this.health += 0.0015 - waterLevel / 100;
+            // comment this though
+            if (0.0015 - waterLevel / 100 > 0) this.health += 0.0015 - waterLevel / 100;
             this.score++;
         }
         
