@@ -131,7 +131,7 @@ class Player {
             let deepness = waterLevel - grid[l[0]][l[1]];
             this.health -= deepness / 7.5 + 0.005;
         } else {
-            this.health += 0.0015 - waterLevel / 100;
+            // this.health += 0.0015 - waterLevel / 100;
             this.score++;
         }
         
