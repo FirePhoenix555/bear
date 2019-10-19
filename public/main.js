@@ -71,7 +71,8 @@ let uniqueUsers;
 
 let txGens = [];
 
-const SPEED = 0.6;
+// UNCOMMENT change to 0.6 to revert
+const SPEED = 0.3; // 0.6
 const SIZE  = 25;
 const ROUGH = 3;
 
