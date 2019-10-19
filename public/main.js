@@ -572,7 +572,7 @@ function initializeAnimation(num) {
     animationNum = num;
 
     animations[num].hidden = false;
-    animations[num].currentTime = 0;
+    animations[num].currentTime = 15;
     animations[num].play();
 }
 
