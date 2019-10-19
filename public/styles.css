@@ -12,3 +12,10 @@ canvas {
     position: absolute;
     left: 5vw;
 }
+
+#skip {
+    z-index: 2;
+    position: absolute;
+    left: 5px;
+    bottom: 5px;
+}

@@ -175,6 +175,10 @@ function setup() {
         }
     }
 
+    document.getElementById("skip").onclick = () => {
+        skipped = true;
+    }
+
     rectMode(CENTER);
     imageMode(CENTER);
     textSize(50);
@@ -318,16 +322,16 @@ function draw() {
 
         background(0);
 
-        fill(255);
-        rect(3 * width / 4, height / 2, 100, 50);
+        // fill(255);
+        // rect(3 * width / 4, height / 2, 100, 50);
 
-        fill(0);
-        textSize(30);
-        textAlign(CENTER, CENTER);
-        text("SKIP", 3 * width / 4, height / 2);
+        // fill(0);
+        // textSize(30);
+        // textAlign(CENTER, CENTER);
+        // text("SKIP", 3 * width / 4, height / 2);
 
-        textSize(50);
-        textAlign(LEFT, BASELINE);
+        // textSize(50);
+        // textAlign(LEFT, BASELINE);
 
         // drawAnimation(animationNum);
 
@@ -337,6 +341,7 @@ function draw() {
             ended = false;
             animations[animationNum].pause();
             animations[animationNum].hidden = true;
+            document.getElementById("skip").hidden = true;
 
             if (animationNum == 0) {
                 socket.emit("ADD_GAME",null);
@@ -463,8 +468,7 @@ function mouseClicked() {
         }
     } else if (animation) {
         // skip animation
-        if (mouseX >= 3 * width / 4 - 50 && mouseX <= 3 * width / 4 + 50 && mouseY >= height / 2 - 25 && mouseY <= height / 2 + 25)
-            skipped = true;
+        skipped = true;
     }
 }
 
@@ -575,6 +579,8 @@ function initializeAnimation(num) {
     animations[num].hidden = false;
     animations[num].currentTime = 15;
     animations[num].play();
+
+    document.getElementById("skip").hidden = false;
 }
 
 // function drawAnimation(num) {
