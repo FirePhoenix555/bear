@@ -257,7 +257,7 @@ function draw() {
             fill(0);
             text("How To Play",width/6,height/8);
             textSize(20);
-            text("Once you've clicked the play button, an animation will appear. Click anywhere to skip it.\nAfter the game has started, you can use the arrow keys and/or WASD to move around.\nIf you go to one side of the screen (left or right, not top or bottom), the view will change.\nYou'll see trash (usually white objects) and water.\nTouching trash makes you lose health, and you lose health while you're in water, killing you after a few seconds.\nYou also don't gain score when you're in water.\nThere are also fish, which are blueish-green. If you collect them, it'll heal half your health and give you 10 points.\nThere are also seals, which heal you to full health and give you 100 score.\nLastly, there is a mother bear, which looks like your character except with a pink bow on it.\nIf you touch it, it will give you 1000 points and reset the water level, but once you do, the water level rises faster.\nTouching the mother bear also increases the year by 1, and once you reach year "+(startingYear+totalYears+1)+", you'll complete the game.\nAfter you die, or complete the game, another animation will play. You can click to skip it.\nIf your score is high enough to get on the high scores page, you'll get a series of messages about what name you\nchoose and what message you want to put up there.",width/10,height/6);
+            text("Once you've clicked the play button, an animation will appear. Click on the button to skip it.\nAfter the game has started, you can use the arrow keys and/or WASD to move around.\nIf you go to one side of the screen (left or right, not top or bottom), the view will change.\nYou'll see trash (usually white objects) and water.\nTouching trash makes you lose health, and you lose health while you're in water, killing you after a few seconds.\nYou also don't gain score when you're in water.\nThere are also fish, which are blueish-green. If you collect them, it'll heal half your health and give you 10 points.\nThere are also seals, which heal you to full health and give you 100 score.\nLastly, there is a mother bear, which looks like your character except with a pink bow on it.\nIf you touch it, it will give you 1000 points and reset the water level, but once you do, the water level rises faster.\nTouching the mother bear also increases the year by 1, and once you reach year "+(startingYear+totalYears+1)+", you'll complete the game.\nAfter you die, or complete the game, another animation will play. You can click the button to skip it.\nIf your score is high enough to get on the high scores page, you'll get a series of messages about what name you\nchoose and what message you want to put up there.",width/10,height/6);
             textSize(50);
             text("Back", width * 3 / 4 + 50, height * 7 / 8 + 18);
         } else if (scene == 2) {
@@ -316,6 +316,18 @@ function draw() {
         }
 
         background(0);
+
+        fill(255);
+        rect(3 * width / 4, height / 2, 100, 50);
+
+        fill(0);
+        textSize(30);
+        textAlign(CENTER, CENTER);
+        text("SKIP", 3 * width / 4, height / 2);
+
+        textSize(50);
+        textAlign(LEFT, BASELINE);
+
         // drawAnimation(animationNum);
 
         if (skipped || ended) {
@@ -450,7 +462,8 @@ function mouseClicked() {
         }
     } else if (animation) {
         // skip animation
-        skipped = true;
+        if (mouseX >= 3 * width / 4 - 50 && mouseX <= 3 * width / 4 + 50 && mouseY >= height / 2 - 25 && mouseY <= height / 2 + 25)
+            skipped = true;
     }
 }
 
