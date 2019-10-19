@@ -14,17 +14,26 @@ console.log("Running...");
 let scores = [];
 
 io.sockets.on('connection', socket => {
-    socket.emit("GET_COOKIE",{cookie:"JOINED_BEFORE"});
     socket.on("DELETE_HIGHSCORE",data => {scores.splice(data-1,1); scoreRef.set(scores);});
-    socket.on("REQUESTED_COOKIE",data => {
-        if (!data){
-            database.ref("Unique Users").set(userCount+1);
-            socket.emit("SET_COOKIE",{name:"JOINED_BEFORE",value:true});
-        }
-    });
     socket.on("ADD_GAME",()=>{database.ref("Games Played").set(gameCount+1);});
     let ip = socket.request.connection.remoteAddress.substring(7);
     if (!ip) ip = "127.0.0.1";
+    let ipExists = false;
+    for (let i = 0; i < userIPs.split(",").length; i++) {
+        if (userIPs.split(",")[i] === ip){
+            ipExists = true;
+        }
+    }
+    if (ipExists === false){
+        console.log("IP "+ip+" added to IP list.");
+        if (userIPs === ""){
+            userIPs = ip;
+        }
+        else{
+            userIPs += ","+ip;
+        }
+        ipRef.set(userIPs);
+    }
     console.log("Socket = " + socket.id+", IP: "+ip);
     socket.on("score", data => {
         // console.log("fdsdfs");
@@ -50,8 +59,8 @@ io.sockets.on('connection', socket => {
         socket.emit("loadscores1", sc);
     });
     socket.on("reqData", () => {
-        console.log({uniqueUsers:userCount,gamesPlayed:gameCount});
-        socket.emit("loadData",{uniqueUsers:userCount,gamesPlayed:gameCount});
+        console.log({uniqueUsers:userIPs.split(",").length,gamesPlayed:gameCount});
+        socket.emit("loadData",{uniqueUsers:userIPs.split(",").length,gamesPlayed:gameCount});
     })
 });
 
@@ -76,8 +85,18 @@ const database = firebase.database();
 const scoreRef = database.ref("High Scores");
 const uniqueUsers = database.ref("Unique Users");
 const gamesPlayed = database.ref("Games Played");
-let userCount = -1;
+const ipRef = database.ref("Unique IPs");
 let gameCount = -1;
+let userIPs = "";
+
+function updateIPs(data2) {
+    data2.on("value", data => {
+        let f = data.val();
+        userIPs = f;
+    });
+};
+
+updateIPs(ipRef);
 
 function updateScores(data2) {
     data2.on("value", data => {
@@ -93,15 +112,6 @@ function updateScores(data2) {
 };
 
 updateScores(scoreRef);
-
-function updateUsers(data2) {
-    data2.on("value", data => {
-        let f = data.val();
-        userCount = f;
-    });
-};
-
-updateUsers(uniqueUsers);
 
 function updateGames(data2) {
     data2.on("value", data => {
