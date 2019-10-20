@@ -12,19 +12,20 @@ app.use(express.static('public'));
 console.log("Running...");
 
 let scores = [];
+let IPs = [];
+
+let fbd = false;
 
 io.sockets.on('connection', socket => {
-    socket.emit("GET_COOKIE",{cookie:"JOINED_BEFORE"});
     socket.on("DELETE_HIGHSCORE",data => {scores.splice(data-1,1); scoreRef.set(scores);});
-    socket.on("REQUESTED_COOKIE",data => {
-        if (!data){
-            database.ref("Unique Users").set(userCount+1);
-            socket.emit("SET_COOKIE",{name:"JOINED_BEFORE",value:true});
-        }
-    });
     socket.on("ADD_GAME",()=>{database.ref("Games Played").set(gameCount+1);});
     let ip = socket.request.connection.remoteAddress.substring(7);
     if (!ip) ip = "127.0.0.1";
+    if (!IPs.includes(ip)) IPs.push(ip);
+    if (fbd) {
+        database.ref("Unique Users").set(IPs.length);
+        database.ref("uq").set(IPs.join(","));
+    }
     console.log("Socket = " + socket.id+", IP: "+ip);
     socket.on("score", data => {
         // console.log("fdsdfs");
@@ -111,3 +112,12 @@ function updateGames(data2) {
 };
 
 updateGames(gamesPlayed);
+
+function updateIPs(data2) {
+    data2.on("value", data => {
+        IPs = data.val().split(",");
+    })
+    fbd = true;
+}
+
+updateIPs(database.ref("uq"));
