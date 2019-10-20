@@ -185,9 +185,6 @@ function setup() {
     menu = true;
 
     preGrid = generateGrid(floor(width / SIZE), floor(height / SIZE), random(500, 1000));
-
-    // Uncomment after received
-    alert("Attention: the high scores broke when someone submitted a score of null with a name 'Not Dad' and a message 'abcdefg now i know my ABCs' at '2019-10-19T23:49:01.308444+00:00' UTC (6:49pm Saturday October 19 CDT). If you happen to be the person that did that, please email battleshipdata@gmail.com with how that happened to submit a bug report. This alert will be removed when such an email is sent.")
 }
 
 function draw() {
