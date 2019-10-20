@@ -143,7 +143,7 @@ updateRef(uniqueIPs, v => {
     for (let i = 0; i < t.length; i++) {
         if (!IPs.includes(t[i])) IPs.push(t[i]);
     }
-    data2.set(IPs.join(","));
+    uniqueIPs.set(IPs.join(","));
 
     fbd = true;
 });
