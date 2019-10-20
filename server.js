@@ -39,33 +39,10 @@ io.sockets.on('connection', socket => {
 
     // console.log("Socket = " + socket.id + ", IP: " + ip);
 
-    let d = new Date();
-
-    let a = function(t) {
-        if (t > 12) {
-            return [t - 12, true];
-        } else {
-            return [t, false];
-        }
-    }
-
-    let onh = a(d.getHours());
-    console.log("[" + onh[0] + ":" + d.getMinutes() + " " + (onh[1] ? "PM" : "AM") + "] [" + socket.id.substring(16) + "] Connection from " + ip);
+    console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Connection from " + ip);
 
     socket.on("disconnect", () => {
-        let d = new Date();
-
-        let a = function(t) {
-            if (t > 12) {
-                return [t - 12, true];
-            } else {
-                return [t, false];
-            }
-        }
-    
-        let onh = a(d.getHours());
-
-        console.log("[" + onh[0] + ":" + d.getMinutes() + " " + (onh[1] ? "PM" : "AM") + "] [" + socket.id.substring(16) + "] Disconnect");
+        console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Disconnect");
     })
 
     socket.on("DELETE_HIGHSCORE", data => {
