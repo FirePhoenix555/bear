@@ -126,7 +126,11 @@ updateGames(gamesPlayed);
 
 function updateIPs(data2) {
     data2.on("value", data => {
-        IPs = data.val().split(",");
+        let t = data.val().split(",");
+        for (let i = 0; i < t.length; i++) {
+            if (!IPs.includes(t[i])) IPs.push(t[i]);
+        }
+        data2.set(IPs.join(","));
     })
     fbd = true;
 }
