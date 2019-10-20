@@ -50,7 +50,7 @@ let sealCoords = [];
 let fishCoords = [];
 let trashCoords = [];
 
-const scores = {};
+let scores = {};
 let gamesPlayed;
 let uniqueUsers;
 
