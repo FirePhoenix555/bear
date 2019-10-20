@@ -555,6 +555,7 @@ function makeText(a) {
     let t = "";
     for (let i = 0; i < a.length; i++) {
         if (!a[i].name) a[i].name = "Anonymous";
+        if (!a[i].score) a[i].score = 0;
         a[i].name = a[i].name.substring(0, 30);
         let y;
         if (!a[i].year) {y = 0;}
@@ -563,7 +564,6 @@ function makeText(a) {
         let s = " ";
         for (let j = 0; j < a[0].score.toString().length + 29 - a[i].name.length; j++) {s += "-";}
         if (s != " ") s += " ";
-
         t += nf(i + 1, 2) + ". " + nf(a[i].score, a[0].score.toString().length) + " (Year "+(y)+") by " + a[i].name + ((a[i].message) ? (s + a[i].message) : "") + "\n";
     }
     return t;
