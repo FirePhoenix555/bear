@@ -26,7 +26,7 @@ io.sockets.on('connection', socket => {
     //     database.ref("Unique Users").set(IPs.length);
     //     database.ref("uq").set(IPs.join(","));
     // }
-    let req = socket;
+    let req = socket.request;
     var ip = req.headers["x-forwarded-for"];
     if (ip){
         var list = ip.split(",");
