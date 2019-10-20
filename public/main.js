@@ -261,8 +261,8 @@ function draw() {
             text("GAME STATS", width / 4, height / 4 - 100);
 
             textSize(15);
-            text("Games Played: " + gamesPlayed, width / 4, height / 4 - 75);
-            text("Unique Users: " + uniqueUsers, width / 4, height / 4 - 50);
+            text("Games Played: " + (gamesPlayed || "Loading..."), width / 4, height / 4 - 75);
+            text("Unique IPs: " + (uniqueUsers || "Loading..."), width / 4, height / 4 - 50);
             text(t, width / 2, height - 50);
             text(te, width / 4, height / 3);
 
