@@ -19,13 +19,22 @@ let fbd = false;
 io.sockets.on('connection', socket => {
     socket.on("DELETE_HIGHSCORE",data => {scores.splice(data-1,1); scoreRef.set(scores);});
     socket.on("ADD_GAME",()=>{database.ref("Games Played").set(gameCount+1);});
-    let ip = socket.request.connection.remoteAddress.substring(7);
-    if (!ip) ip = "127.0.0.1";
-    if (!IPs.includes(ip)) IPs.push(ip);
-    if (fbd) {
-        database.ref("Unique Users").set(IPs.length);
-        database.ref("uq").set(IPs.join(","));
+    // let ip = socket.request.connection.remoteAddress.substring(7);
+    // if (!ip) ip = "127.0.0.1";
+    // if (!IPs.includes(ip)) IPs.push(ip);
+    // if (fbd) {
+    //     database.ref("Unique Users").set(IPs.length);
+    //     database.ref("uq").set(IPs.join(","));
+    // }
+
+    var ip = req.headers["x-forwarded-for"];
+    if (ip){
+        var list = ip.split(",");
+        ip = list[list.length-1];
+    } else {
+        ip = req.connection.remoteAddress;
     }
+
     console.log("Socket = " + socket.id+", IP: "+ip);
     socket.on("score", data => {
         // console.log("fdsdfs");
