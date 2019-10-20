@@ -466,9 +466,6 @@ function mouseClicked() {
                 scene = 0;
             }
         }
-    } else if (animation) {
-        // skip animation
-        skipped = true;
     }
 }
 
