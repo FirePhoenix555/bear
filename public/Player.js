@@ -6,6 +6,9 @@ class Player {
         this.sx = x;
         this.sy = y;
 
+        this.mx = 0;
+        this.my = 0;
+
         this.health = 1;
 
         this.score = 0;
@@ -14,9 +17,6 @@ class Player {
         this.nhs = false;
 
         this.si = 0; // sprite index
-
-        this.mx = 0;
-        this.my = 0;
     }
 
     move() {
@@ -31,22 +31,22 @@ class Player {
             this.si = 1;
             this.my -= SPEED;
         }
+
         if (down) {
             this.si = 3;
             this.my += SPEED;
         }
+
         if (left) {
             this.si = 2;
             this.mx -= SPEED;
         }
+
         if (right) {
             this.si = 4;
             this.mx += SPEED;
         }
 
-        // if both left and right are held or both up and down, just show the standing animation
-        // but don't show it if there's another key pressed
-        // but if all 4 are pressed, show it
         if (left && right) {
             if ((!up && !down) || (up && down)) {
                 this.si = 0;
@@ -103,17 +103,20 @@ class Player {
         if (this.x < SIZE / 2 + 2) {
             this.x = width - SIZE - 2;
             tx--;
+
             grid = generateGrid(floor(width / SIZE), floor(height / SIZE), ofs);
         }
         if (this.x > width - SIZE / 2 - 2) {
             this.x = SIZE + 2;
             tx++;
+
             grid = generateGrid(floor(width / SIZE), floor(height / SIZE), ofs);
         }
 
         if (this.y < SIZE + 2) {
             this.y = SIZE + 2;
         }
+
         if (this.y > height - SIZE - 2) {
             this.y = height - SIZE - 2;
         }
@@ -123,7 +126,6 @@ class Player {
         this.draw();
 
         this.move();
-
         this.constrainMovement();
 
         let l = this.getLocation();
@@ -137,9 +139,6 @@ class Player {
             if (0.0015 - waterLevel / 100 > 0) this.health += 0.0015 - waterLevel / 100;
             this.score++;
         }
-        
-        // fill(0);
-        // rect(l[0] * SIZE, l[1] * SIZE, SIZE, SIZE);
 
         if (this.health > 1) {
             this.health = 1;
@@ -147,7 +146,7 @@ class Player {
             if (this.score > this.hs) {
                 this.hs = this.score;
             }
-            socket.emit("reqScores1", null);
+            socket.emit("reqScores1");
             initializeAnimation(1);
         }
     }
@@ -161,6 +160,9 @@ class Player {
         this.x = this.sx;
         this.y = this.sy;
 
+        this.mx = 0;
+        this.my = 0;
+
         this.health = 1;
 
         this.score = 0;
@@ -168,8 +170,5 @@ class Player {
         this.nhs = false;
 
         this.si = 0; // sprite index
-
-        this.mx = 0;
-        this.my = 0;
     }
 }

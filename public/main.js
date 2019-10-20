@@ -1,4 +1,3 @@
-
 /*
 TODO
 Audrey
@@ -8,114 +7,85 @@ Alex
 - eat pie
 
 Overall
-OPTIONAL
-- sounds (corn starch is good for snow)
-
-NOT OPTIONAL
-- how to play (ADD 'click to skip animations')
 - polish
 - submit
 */
 
-let wlr = 0.000125;
-let year = 0;
-let startingYear = 2019;
-let totalYears = 25;
-let setScore = 0;
-
 const socket = io();
-
-let mother;
-let sealCoords = [];
-let player;
-let grid;
-let waterLevel = 0;
-let setWaterLevel = false;
-
-let deathAnimationLength = 100;
-let deathAnimationTimer = 0;
-
-let score = 0;
-let scores = {};
-
-/*
-socket.emit("score",{});
-socket.emit("reqScores",null);
-*/
-
-let animation = false;
-let animationNum;
-const animations = [];
-let skipped = false;
-let ended = false;
-
-let menu = false;
-let scene = 0;
-
-let waiting = false;
-
-let tx = 0;
-
-let canvas;
-
-const SPRITES = [];
-const TRASH = [];
-let fish = null;
-let fishes = [];
-
-let motherImg = null;
-let sealie = null;
-
-let gamesPlayed;
-let uniqueUsers;
-
-let txGens = [];
 
 // UNCOMMENT change to 0.6 to revert
 const SPEED = 0.45; // 0.6 // 0.3
 const SIZE  = 25;
 const ROUGH = 3;
 
+const swlr = 0.000125;
+const startingYear = 2019;
+const totalYears = 25;
+
+let year = 0;
+let score = 0;
+
+let wlr = swlr;
+let waterLevel = 0;
+let preWaterLevel = 0;
+
+let setScore = 0;
+let setWaterLevel = false;
+
+let canvas;
+let mother;
+let player;
+let pregrid;
+let grid;
+
+let fish;
+const fishes = [];
+let motherImg;
+let sealie;
+
+const SPRITES = [];
+const TRASH = [];
+
+let sealCoords = [];
 let fishCoords = [];
 let trashCoords = [];
 
+const scores = {};
+let gamesPlayed;
+let uniqueUsers;
+
+let menu = false;
+let scene = 0;
+
+const animations = [];
+let animationNum;
+let animation = false;
+let skipped = false;
+let ended = false;
+
+let waiting = false;
+
+let tx = 0;
+let txGens = [];
+
 let ofs;
 
-let pregrid = [];
-let preWaterLevel = 0;
+// socket.on("SET_COOKIE", data => {
+//     document.cookie = data.name + "=" + data.value + ";";
+// });
 
-socket.on("SET_COOKIE", data => {
-    document.cookie=data.name+"="+data.value+";";
-});
+// socket.on("GET_COOKIE", data => {
+//     socket.emit("REQUESTED_COOKIE", getCookie(data.cookie));
+// });
 
-function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return "";
-  }
-
-socket.on("GET_COOKIE", data => {
-    socket.emit("REQUESTED_COOKIE",getCookie(data.cookie));
-});
-
-socket.on("ALERT", data => {
-    alert(data);
-});
+// socket.on("ALERT", data => {
+//     alert(data);
+// });
 
 socket.on("loadData", data => {
     gamesPlayed = data.gamesPlayed;
     uniqueUsers = data.uniqueUsers;
-})
+});
 
 socket.on("loadscores", data => {
     scores = data;
@@ -123,17 +93,17 @@ socket.on("loadscores", data => {
 
 socket.on("loadscores1", data => {
     scores = data;
-    if ((!scores["10"] || (player.score > scores["10"].score)) /* && this.score > 2466 */) {
+    if (!scores["10"] || player.score > scores["10"].score) {
         player.nhs = true;
     }
-})
+});
 
 socket.on("received", () => {
     waiting = false;
     console.log("");
-})
+});
 
-socket.emit("reqScores", null);
+socket.emit("reqScores");
 
 function preload() {
     SPRITES[0] = createImg("assets/polar-bear/standing.gif");
@@ -160,10 +130,8 @@ function preload() {
 }
 
 function setup() {
-    //canvas = createCanvas(SIZE * floor(windowWidth / SIZE) || 500, SIZE * floor(windowHeight / SIZE) || 500);
-    canvas = createCanvas(windowWidth,windowHeight);
-
-    player = new Player(floor(width / (2 * SIZE)) * SIZE + SIZE / 2, floor(height / (2 * SIZE)) * SIZE + SIZE / 2);
+    // canvas = createCanvas(SIZE * floor(windowWidth / SIZE) || 500, SIZE * floor(windowHeight / SIZE) || 500);
+    canvas = createCanvas(windowWidth, windowHeight);
 
     frameRate(30);
     animations[0] = document.getElementById("anim0");
@@ -181,14 +149,18 @@ function setup() {
 
     rectMode(CENTER);
     imageMode(CENTER);
+    textAlign(LEFT, BASELINE);
     textSize(50);
+
     menu = true;
 
+    player = new Player(floor(width / (2 * SIZE)) * SIZE + SIZE / 2, floor(height / (2 * SIZE)) * SIZE + SIZE / 2);
     preGrid = generateGrid(floor(width / SIZE), floor(height / SIZE), random(500, 1000));
 }
 
 function draw() {
     if (waiting) console.log("waiting");
+
     if (menu) {
         // draw the menu
         background(255);
@@ -198,7 +170,7 @@ function draw() {
 
             for (let i = 0; i < preGrid.length; i++) {
                 for (let j = 0; j < preGrid[i].length; j++) {
-                    drawGrid(preGrid, i, j,preWaterLevel);
+                    drawGrid(preGrid, i, j, preWaterLevel);
                 }
             }
 
@@ -211,33 +183,34 @@ function draw() {
             if (mouseX >= width / 2 - (width - 100) / 2 && mouseX <= width / 2 + (width - 100) / 2) {
                 if (mouseY >= height / 2 - 100 && mouseY <= height / 2) {
                     fill(230);
+
                     if (mouseIsPressed) {
                         fill(200);
                     }
+
                     rect(width / 2, height / 2 - 50, width - 100, 100); // play
                 } else if (mouseY >= height / 2 + 25 && mouseY <= height / 2 + 125) {
                     fill(230);
+
                     if (mouseIsPressed) {
                         fill(200);
                     }
+
                     rect(width / 2, height / 2 + 75, width - 100, 100); // how to
                 } else if (mouseY >= height / 2 + 150 && mouseY <= height / 2 + 250) {
                     fill(230);
+
                     if (mouseIsPressed) {
                         fill(200);
                     }
+
                     rect(width / 2, height / 2 + 200, width - 100, 100); // highscores
                 }
             }
 
-            // if (score != 0) {
-            //     while(true) {
-            //         console.log(1 / 0);
-            //     }
-            // }
-
             fill(0);
             textAlign(CENTER, CENTER);
+
             text("On Thin Ice", width / 2, (height / 2 - 100) / 2);
 
             textSize(15);
@@ -254,20 +227,26 @@ function draw() {
             fill(255);
             if (mouseX >= width * 3 / 4 && mouseX <= width * 3 / 4 + 200 && mouseY >= height * 7 / 8 - 25 && mouseY <= height * 7 / 8 + 25) {
                 fill(230);
+
                 if (mouseIsPressed) {
                     fill(200);
                 }
             }
+
             rect(width * 3 / 4 + 100, height * 7 / 8, 200, 50);
+
             fill(0);
-            text("How To Play",width/6,height/8);
+            text("How To Play", width / 6, height / 8);
+
             textSize(20);
             text("Once you've clicked the play button, an animation will appear. Click on the button to skip it.\nAfter the game has started, you can use the arrow keys and/or WASD to move around.\nIf you go to one side of the screen (left or right, not top or bottom), the view will change.\nYou'll see trash (usually white objects) and water.\nTouching trash makes you lose health, and you lose health while you're in water, killing you after a few seconds.\nYou also don't gain score when you're in water.\nThere are also fish, which are blueish-green. If you collect them, it'll heal half your health and give you 10 points.\nThere are also seals, which heal you to full health and give you 100 score.\nLastly, there is a mother bear, which looks like your character except with a pink bow on it.\nIf you touch it, it will give you 1000 points and reset the water level, but once you do, the water level rises faster.\nTouching the mother bear also increases the year by 1, and once you reach year "+(startingYear+totalYears+1)+", you'll complete the game.\nAfter you die, or complete the game, another animation will play. You can click the button to skip it.\nIf your score is high enough to get on the high scores page, you'll get a series of messages about what name you\nchoose and what message you want to put up there.",width/10,height/6);
+            
             textSize(50);
             text("Back", width * 3 / 4 + 50, height * 7 / 8 + 18);
         } else if (scene == 2) {
             // high scores
             fill(0);
+
             let t = "Your high score: " + player.hs;
             if (player.hs < 0) {
                 t = "Play a game to see your high score.";
@@ -276,36 +255,33 @@ function draw() {
             let sc = makeScores(scores);
             let te = makeText(sc);
 
-            // textAlign(CENTER, CENTER);
-            textFont("Consolas")
+            textFont("Consolas");
             textSize(30);
-            textAlign(LEFT,BASELINE);
-            text("HIGH SCORES",width/4,height / 3 - 50);
-            text("GAME STATS",width/4,height / 4 - 100);
+            text("HIGH SCORES", width / 4, height / 3 - 50);
+            text("GAME STATS", width / 4, height / 4 - 100);
+
             textSize(15);
-            text("Games Played: "+gamesPlayed,width/4,height / 4 - 75);
-            text("Unique Users: "+uniqueUsers,width/4,height / 4 - 50);
+            text("Games Played: " + gamesPlayed, width / 4, height / 4 - 75);
+            text("Unique Users: " + uniqueUsers, width / 4, height / 4 - 50);
             text(t, width / 2, height - 50);
             text(te, width / 4, height / 3);
 
-
-            // textAlign(LEFT, BASELINE);
-            textFont("Arial")
+            textFont("Arial");
             textSize(50);
 
             fill(255);
             if (mouseX >= width * 3 / 4 && mouseX <= width * 3 / 4 + 200 && mouseY >= height * 7 / 8 - 25 && mouseY <= height * 7 / 8 + 25) {
                 fill(230);
+
                 if (mouseIsPressed) {
                     fill(200);
                 }
             }
+
             rect(width * 3 / 4 + 100, height * 7 / 8, 200, 50);
 
             fill(0);
             text("Back", width * 3 / 4 + 50, height * 7 / 8 + 18);
-
-            // console.log(scores);
         }
         
         return;
@@ -322,29 +298,19 @@ function draw() {
 
         background(0);
 
-        // fill(255);
-        // rect(3 * width / 4, height / 2, 100, 50);
-
-        // fill(0);
-        // textSize(30);
-        // textAlign(CENTER, CENTER);
-        // text("SKIP", 3 * width / 4, height / 2);
-
-        // textSize(50);
-        // textAlign(LEFT, BASELINE);
-
-        // drawAnimation(animationNum);
-
         if (skipped || ended) {
             animation = false;
             skipped = false;
             ended = false;
+
             animations[animationNum].pause();
+            
             animations[animationNum].hidden = true;
             document.getElementById("skip").hidden = true;
 
             if (animationNum == 0) {
-                socket.emit("ADD_GAME",null);
+                socket.emit("ADD_GAME");
+
                 player.reset();
                 waterLevel = 0;
                 txGens = [];
@@ -352,8 +318,9 @@ function draw() {
                 trashCoords = [];
                 sealCoords = [];
                 mother = null;
-                wlr = 0.000125;
-                year = 0; // my iq
+                wlr = swlr;
+                year = 0;
+
                 ofs = random(5, 10) * 1000;
                 grid = generateGrid(floor(width / SIZE), floor(height / SIZE), ofs);
                 grid[floor(player.x / width * SIZE)][floor(player.y / height * SIZE)] = max(grid[floor(player.x / width * SIZE)][floor(player.y / height * SIZE)], 0.17);
@@ -361,28 +328,26 @@ function draw() {
 
             if (animationNum >= animations.length - 1) {
                 menu = true;
+                scene = 0;
+
                 preGrid = generateGrid(floor(width / SIZE), floor(height / SIZE), random(500, 1000));
                 preWaterLevel = 0;
-                scene = 0;
 
                 if (player.nhs) {
                     alert("Your score of " + player.score + " was high enough to be on the leaderboard! This means you can submit your name and a message to display to anyone, along with your score, on the high scores page.");
                     let name = prompt("What's your name?");
                     let message = prompt("What message would you like to display?");
-                    // console.log("emitting");
                     if (!name) name = "Anonymous";
-                    socket.emit("score", {score: player.score, message, name, year});
-                    // console.log("emitted");
+                    socket.emit("score", {
+                        score: player.score,
+                        message,
+                        name,
+                        year
+                    });
                     waiting = true;
                 }
             }
         }
-
-        // if (score != 0) {
-        //     while(true) {
-        //         console.log(1 / 0);
-        //     }
-        // }
 
         return;
     }
@@ -400,6 +365,7 @@ function draw() {
     fill(255);
     stroke(0);
     rect(width / 2, SIZE, 200, SIZE);
+
     fill(255 * (1 - player.health), 255 * player.health, 0);
     rect(width / 2, SIZE, player.health * 200, SIZE);
 
@@ -408,33 +374,26 @@ function draw() {
 
     waterLevel += wlr;
 
-    // if (score != 0) {
-    //     while(true) {
-    //         console.log(1 / 0);
-    //     }
-    // }
-
-    if (waterLevel > 1) {
-        initializeAnimation(1);
-    }
-
-    if (setWaterLevel){
-        if (waterLevel < 0.01){
+    if (setWaterLevel) {
+        if (waterLevel < 0.01) {
             waterLevel = 0;
             setWaterLevel = false;
         }
+
         waterLevel *= 0.85;
     }
-    if (setScore > 0){
-        player.score += ceil(setScore/50);
-        setScore -= ceil(setScore/50);
+
+    if (setScore > 0) {
+        player.score += ceil(setScore / 50);
+        setScore -= ceil(setScore / 50);
     }
 
     updateFish();
     updateTrash();
     updateSeals();
     updateMother();
-    drawYear(0.1,0.925);
+
+    drawYear(0.1, 0.925);
 }
 
 function mouseClicked() {
@@ -444,7 +403,6 @@ function mouseClicked() {
                 if (mouseY >= height / 2 - 100 && mouseY <= height / 2) {
                     // clicked 'play'
                     initializeAnimation(0);
-                    ofs = random(5, 10) * 1000;
                     menu = false;
                 } else if (mouseY >= height / 2 + 25 && mouseY <= height / 2 + 125) {
                     // clicked 'how to play'
@@ -452,8 +410,9 @@ function mouseClicked() {
                 } else if (mouseY >= height / 2 + 150 && mouseY <= height / 2 + 250) {
                     // clicked 'high scores'
                     scene = 2;
-                    socket.emit("reqScores", null);
-                    socket.emit("reqData",null);
+
+                    socket.emit("reqScores");
+                    socket.emit("reqData");
                 }
             }
         } else if (scene == 1) {
@@ -468,6 +427,22 @@ function mouseClicked() {
         }
     }
 }
+
+// function getCookie(cname) {
+//     var name = cname + "=";
+//     var decodedCookie = decodeURIComponent(document.cookie);
+//     var ca = decodedCookie.split(';');
+//     for(var i = 0; i <ca.length; i++) {
+//         var c = ca[i];
+//         while (c.charAt(0) == ' ') {
+//             c = c.substring(1);
+//         }
+//         if (c.indexOf(name) == 0) {
+//             return c.substring(name.length, c.length);
+//         }
+//     }
+//     return "";
+// }
 
 function generateGrid(w, h, offset) {
     if (!offset) offset = 0;
@@ -494,6 +469,7 @@ function generateGrid(w, h, offset) {
         generateTrash(grid);
         generateSeals(grid);
         generateMother(grid);
+
         txGens.push(tx);
     }
 
@@ -508,18 +484,24 @@ function drawGrid(grid, i, j, water) {
     } else {
         noStroke();
         fill(200 - (150 * (water - grid[i][j])), 255 - (200 * (water - grid[i][j])), 240 - (10 * (water - grid[i][j])));
-        let y = 0;
+        
         let x = 0;
-        if (i+1 < grid.length){
-            if (grid[i+1][j] <= water) y = 1;
+        let y = 0;
+
+        if (j + 1 < grid.length){
+            if (grid[i][j + 1] <= water) x = 1;
         }
-        if (j+1 < grid.length){
-            if (grid[i][j+1] <= water) x = 1;
+
+        if (i + 1 < grid.length){
+            if (grid[i + 1][j] <= water) y = 1;
         }
-        rect(i * SIZE, j * SIZE, SIZE+y, SIZE+x);
+
+        rect(i * SIZE, j * SIZE, SIZE + y, SIZE + x);
 
         let a = adjacentWater(grid, i, j, water);
+
         stroke(0);
+
         if (a[0]) {
             line(i * SIZE - SIZE / 2, j * SIZE - SIZE / 2, (i + 1) * SIZE - SIZE / 2, j * SIZE - SIZE / 2);
         }
@@ -557,15 +539,22 @@ function makeText(a) {
         if (!a[i].name) a[i].name = "Anonymous";
         if (!a[i].score) a[i].score = 0;
         a[i].name = a[i].name.substring(0, 30);
-        let y;
-        if (!a[i].year) {y = 0;}
-        else {y = a[i].year}
-        y = nf(y+startingYear, (a[0].year+startingYear).toString().length);
+
+        let y = a[i].year;
+        if (!y) y = 0;
+        y = nf(y + startingYear, (a[0].year + startingYear).toString().length);
+
         let s = " ";
-        for (let j = 0; j < a[0].score.toString().length + 29 - a[i].name.length; j++) {s += "-";}
+
+        for (let j = 0; j < a[0].score.toString().length + 29 - a[i].name.length; j++) {
+            s += "-";
+        }
+
         if (s != " ") s += " ";
-        t += nf(i + 1, 2) + ". " + nf(a[i].score, a[0].score.toString().length) + " (Year "+(y)+") by " + a[i].name + ((a[i].message) ? (s + a[i].message) : "") + "\n";
+
+        t += nf(i + 1, 2) + ". " + nf(a[i].score, a[0].score.toString().length) + " (Year " + y + ") by " + a[i].name + ((a[i].message) ? (s + a[i].message) : "") + "\n";
     }
+
     return t;
 }
 
@@ -573,23 +562,12 @@ function initializeAnimation(num) {
     animation = true;
     animationNum = num;
 
-    animations[num].hidden = false;
     animations[num].currentTime = 15;
+    animations[num].hidden = false;
     animations[num].play();
 
     document.getElementById("skip").hidden = false;
 }
-
-// function drawAnimation(num) {
-//     background(0);
-//     fill(255);
-//     //text(num, width / 2, height / 2);
-//     if (num == 0) {
-//         //
-//     } else if (num == 1) {
-//         text(player.score, width / 2, height / 4);
-//     }
-// }
 
 function drawFish(f, x, y, scl) {
     if (!scl) scl = 1;
@@ -597,7 +575,6 @@ function drawFish(f, x, y, scl) {
     f.position(x, y);
     f.style("width", scl * fish.width + "px");
     f.style("height", scl * fish.height + "px");
-    // image(fish, x, y, scl * fish.width, scl * fish.height);
 }
 
 function drawImage(i, x, y, scl) {
@@ -605,15 +582,17 @@ function drawImage(i, x, y, scl) {
     image(i, x, y, scl * i.width, scl * i.height);
 }
 
-function updateMother(){
-    if (mother !== null){
-        if (mother.tx === tx){
-            drawImage(motherImg, mother.i*SIZE,mother.j*SIZE - motherImg.height / 2,2);
-            if (mother.i*SIZE === player.x && (mother.j*SIZE === player.y || (mother.j - 1)*SIZE === player.y)){
+function updateMother() {
+    if (mother !== null) {
+        if (mother.tx == tx) {
+            drawImage(motherImg, mother.i * SIZE, mother.j * SIZE - motherImg.height / 2, 2);
+
+            if (mother.i * SIZE == player.x && (mother.j * SIZE == player.y || (mother.j - 1) * SIZE == player.y)) {
                 setWaterLevel = true;
+                setScore += 1000;
+
                 wlr *= 1.125;
                 year++;
-                setScore += 1000;
                 mother = null;
 
                 if (year > totalYears) {
@@ -623,6 +602,7 @@ function updateMother(){
         }
     }
 }
+
 function generateFish(grid) {
     for (let i = 2; i < grid.length - 2; i++) {
         for (let j = 2; j < grid[i].length - 2; j++) {
@@ -648,7 +628,8 @@ function generateFish(grid) {
         }
     }
 }
-function generateSeals(grid){
+
+function generateSeals(grid) {
     for (let i = 2; i < grid.length - 2; i++) {
         for (let j = 2; j < grid[i].length - 2; j++) {
             if ((i + 0.5) * SIZE == player.x && (j + 0.5) * SIZE == player.y) {
@@ -660,14 +641,16 @@ function generateSeals(grid){
                 let down = (grid[i + 1][j] > waterLevel);
                 let left = (grid[i][j - 1] > waterLevel);
                 let right = (grid[i][j + 1] > waterLevel);
+
                 if ((up || down || left || right) && random(1) > 0.999) {
-                    sealCoords.push({tx,i, j});
+                    sealCoords.push({tx, i, j});
                 }
             }
         }
     }
 }
-function generateMother(grid){
+
+function generateMother(grid) {
     for (let i = 2; i < grid.length - 2; i++) {
         for (let j = 2; j < grid[i].length - 2; j++) {
             if ((i + 0.5) * SIZE == player.x && (j + 0.5) * SIZE == player.y) {
@@ -679,20 +662,17 @@ function generateMother(grid){
                 let down = (grid[i + 1][j] > waterLevel);
                 let left = (grid[i][j - 1] > waterLevel);
                 let right = (grid[i][j + 1] > waterLevel);
+
                 if ((up && down && left && right) && random(1) > 0.9999) {
                     if (mother === null){
-                        mother = {tx,i, j};
-                    }
-                    if(mother != null){
-                        if (mother.tx !== tx){
-                            // if (random(1) > 0.9) mother = null;
-                        }
+                        mother = {tx, i, j};
                     }
                 }
             }
         }
     }
 }
+
 function generateTrash(grid) {
     for (let i = 2; i < grid.length - 2; i++) {
         for (let j = 2; j < grid[i].length - 2; j++) {
@@ -703,6 +683,7 @@ function generateTrash(grid) {
                     break;
                 }
             }
+
             if (spot) {
                 continue;
             }
@@ -710,6 +691,7 @@ function generateTrash(grid) {
             if ((i + 0.5) * SIZE == player.x && (j + 0.5) * SIZE == player.y) {
                 continue;
             }
+
             if (grid[i][j] <= waterLevel || random(1) > 0.8) {
                 if (random(1) > 0.99) {
                     trashCoords.push({tx, i, j, type: floor(random(TRASH.length))});
@@ -721,12 +703,6 @@ function generateTrash(grid) {
 
 function updateFish() {
     for (let i = fishCoords.length - 1; i >= 0; i--) {
-        // if (fishCoords[i].i > grid.length - 2 || fishCoords[i].i < 2 || fishCoords[i].j > grid[fishCoords[i].i].length - 2 || fishCoords[i].j < 2) {
-        //     fishCoords.splice(i, 1);
-        //     fishes[i].hide();
-        //     fishes.splice(i, 1);
-        // }
-
         if (fishCoords[i].tx == tx) {
             drawFish(fishes[i], fishCoords[i].i * SIZE + SIZE / 4, fishCoords[i].j * SIZE, 1.5);
 
@@ -734,6 +710,7 @@ function updateFish() {
                 fishCoords.splice(i, 1);
                 fishes[i].hide();
                 fishes.splice(i, 1);
+
                 player.health += 0.5 + waterLevel / 10;
                 player.score += 10;
             }
@@ -742,44 +719,52 @@ function updateFish() {
         }
     }
 }
-function updateSeals(){
-    for (let i = sealCoords.length - 1; i >= 0; i--){
-        if (sealCoords[i].tx === tx){
-            drawImage(sealie, sealCoords[i].i*SIZE,sealCoords[i].j*SIZE,1.5);
+
+function updateSeals() {
+    for (let i = sealCoords.length - 1; i >= 0; i--) {
+        if (sealCoords[i].tx == tx) {
+            drawImage(sealie, sealCoords[i].i * SIZE, sealCoords[i].j * SIZE, 1.5);
+
             if ((sealCoords[i].i) * SIZE == player.x && (sealCoords[i].j) * SIZE == player.y) {
                 sealCoords.splice(i, 1);
+
                 player.health = 1;
                 player.score += 100;
             }
         }
     }
-};
+}
 
 function updateTrash() {
     for (let i = trashCoords.length - 1; i >= 0; i--) {
-        if (trashCoords[i].tx === tx) {
+        if (trashCoords[i].tx == tx) {
             drawImage(TRASH[trashCoords[i].type], trashCoords[i].i * SIZE + SIZE, trashCoords[i].j * SIZE + SIZE, 1.5);
             
             if ((trashCoords[i].i + 1) * SIZE == player.x && (trashCoords[i].j + 1) * SIZE == player.y) {
                 trashCoords.splice(i, 1);
+
                 player.health -= 0.5;
             }
         }
     }
 }
 
-function drawYear(xmult, ymult){
+function drawYear(xmult, ymult) {
     stroke(0);
     strokeWeight(5);
-    line(windowWidth*xmult,windowHeight*ymult,windowWidth*(1-xmult),windowHeight*ymult);
-    let unit = (windowWidth*(1-xmult*2))/totalYears;
+    line(windowWidth * xmult, windowHeight * ymult, windowWidth * (1 - xmult), windowHeight * ymult);
+
+    let unit = (windowWidth * (1 - xmult * 2)) / totalYears;
+
     strokeWeight(15);
-    point(windowWidth*xmult+unit*year,windowHeight*ymult);
+    point(windowWidth * xmult + unit * year, windowHeight * ymult);
+
     strokeWeight(1);
     textSize(30);
     fill(0);
-    textAlign(CENTER,CENTER);
-    text(startingYear+year,windowWidth*xmult+unit*year,windowHeight*ymult-27.5);
+    textAlign(CENTER, CENTER);
+    text(startingYear + year, windowWidth * xmult + unit * year, windowHeight * ymult - 27.5);
+
     textSize(50);
-    textAlign(LEFT)
-};
+    textAlign(LEFT, BASELINE);
+}
