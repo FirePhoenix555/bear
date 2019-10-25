@@ -8,6 +8,7 @@ const socket = require('socket.io');
 const io = socket(server);
 
 app.use(express.static('public'));
+app.use("/video", express.static("public/video.html"));
 
 console.log("Running...");
 
