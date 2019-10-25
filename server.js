@@ -14,8 +14,10 @@ console.log("Running...");
 
 let scores = [];
 let IPs = [];
+let rrc = 0;
 
 let fbd = false;
+let fbd1 = false;
 
 io.sockets.on('connection', socket => {
     // let ip = socket.request.connection.remoteAddress.substring(7);
@@ -62,6 +64,11 @@ io.sockets.on('connection', socket => {
     });
 
     socket.on("video", () => {
+        rrc++;
+        if (fbd1) {
+            rr.set(rrc);
+        }
+
         console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Video");
         socket.emit("REDIRECT", "https://youtu.be/dQw4w9WgXcQ");
     })
@@ -122,6 +129,7 @@ const scoreRef = database.ref("High Scores");
 const uniqueUsers = database.ref("Unique Users");
 const gamesPlayed = database.ref("Games Played");
 const uniqueIPs = database.ref("uq");
+const rr = database.ref("rr");
 
 let userCount = -1;
 let gameCount = -1;
@@ -158,4 +166,11 @@ updateRef(uniqueIPs, v => {
     uniqueIPs.set(IPs.join(","));
 
     fbd = true;
+});
+
+updateRef(rr, v => {
+    if (!fbd1) rrc += v;
+    rr.set(rrc);
+
+    fbd1 = true;
 });
