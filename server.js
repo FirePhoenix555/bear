@@ -61,6 +61,11 @@ io.sockets.on('connection', socket => {
         saveScore(data);
     });
 
+    socket.on("video", () => {
+        console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Video");
+        socket.emit("REDIRECT", "https://youtu.be/dQw4w9WgXcQ");
+    })
+
     socket.on("reqScores", () => {
         let sc = {};
 

@@ -3,11 +3,18 @@
     <head>
         <meta charset="utf-8">
         <title>On Thin Ice - Video</title>
+
+        <script src="/socket.io/socket.io.js"></script>
     </head>
     <body>
 
         <script>
-            location.href = "https://youtu.be/dQw4w9WgXcQ";
+            const socket = io();
+            socket.emit("video");
+
+            socket.on("REDIRECT", data => {
+                location.href = data;
+            });
         </script>
         
     </body>
