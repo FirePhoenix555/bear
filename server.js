@@ -20,29 +20,31 @@ let fbd = false;
 let fbd1 = false;
 
 io.sockets.on('connection', socket => {
-    // let ip = socket.request.connection.remoteAddress.substring(7);
-    // if (!ip) ip = "127.0.0.1";
-    
-    let ip = socket.request.headers["x-forwarded-for"];
+    socket.on("game", () => {
+        // let ip = socket.request.connection.remoteAddress.substring(7);
+        // if (!ip) ip = "127.0.0.1";
+        
+        let ip = socket.request.headers["x-forwarded-for"];
 
-    if (ip) {
-        let list = ip.split(",");
-        ip = list[list.length - 1];
-    } else {
-        ip = socket.request.connection.remoteAddress;
-        if (!ip || ip == "::1") ip = "127.0.0.1";
-    }
+        if (ip) {
+            let list = ip.split(",");
+            ip = list[list.length - 1];
+        } else {
+            ip = socket.request.connection.remoteAddress;
+            if (!ip || ip == "::1") ip = "127.0.0.1";
+        }
 
-    if (!IPs.includes(ip)) IPs.push(ip);
+        if (!IPs.includes(ip)) IPs.push(ip);
 
-    if (fbd) {
-        uniqueUsers.set(IPs.length);
-        uniqueIPs.set(IPs.join(","));
-    }
+        if (fbd) {
+            uniqueUsers.set(IPs.length);
+            uniqueIPs.set(IPs.join(","));
+        }
 
-    // console.log("Socket = " + socket.id + ", IP: " + ip);
+        // console.log("Socket = " + socket.id + ", IP: " + ip);
 
-    console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Connection from " + ip);
+        console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Connection from " + ip);
+    });
 
     socket.on("disconnect", () => {
         console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Disconnect");
@@ -64,12 +66,22 @@ io.sockets.on('connection', socket => {
     });
 
     socket.on("video", () => {
+        let ip = socket.request.headers["x-forwarded-for"];
+
+        if (ip) {
+            let list = ip.split(",");
+            ip = list[list.length - 1];
+        } else {
+            ip = socket.request.connection.remoteAddress;
+            if (!ip || ip == "::1") ip = "127.0.0.1";
+        }
+
         rrc++;
         if (fbd1) {
             rr.set(rrc);
         }
 
-        console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Video");
+        console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Video from " + ip);
         socket.emit("REDIRECT", "https://youtu.be/dQw4w9WgXcQ");
     })
 

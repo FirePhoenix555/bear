@@ -103,6 +103,7 @@ socket.on("received", () => {
     console.log("");
 });
 
+socket.emit("game");
 socket.emit("reqScores");
 
 function preload() {
