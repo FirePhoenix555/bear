@@ -169,8 +169,11 @@ updateRef(uniqueIPs, v => {
 });
 
 updateRef(rr, v => {
-    if (!fbd1) rrc += v;
-    rr.set(rrc);
-
-    fbd1 = true;
+    if (!fbd1) {
+        rrc += v;
+        rr.set(rrc);
+        fbd1 = true;
+    } else {
+        rrc = v;
+    }
 });
