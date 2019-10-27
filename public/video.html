@@ -13,13 +13,14 @@
             socket.emit("video");
 
             socket.on("REDIRECT", data => {
-                setTimeout(() => location.href = data, 1000);
+                // setTimeout(() => location.href = data, 1000);
+                location.href = data;
             });
         </script>
 
-        <p>
+        <!-- <p>
             Redirecting to YouTube...
-        </p>
+        </p> -->
         
     </body>
 </html>
