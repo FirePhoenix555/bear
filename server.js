@@ -50,10 +50,10 @@ io.sockets.on('connection', socket => {
         console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Disconnect");
     })
 
-    socket.on("DELETE_HIGHSCORE", data => {
-        scores.splice(data - 1, 1);
-        scoreRef.set(scores);
-    });
+    // socket.on("DELETE_HIGHSCORE", data => {
+    //     scores.splice(data - 1, 1);
+    //     scoreRef.set(scores);
+    // });
 
     socket.on("ADD_GAME", () => {
         gamesPlayed.set(gameCount + 1);
