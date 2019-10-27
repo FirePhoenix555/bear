@@ -1,3 +1,10 @@
+/*
+ * --
+ * Alex Loan
+ * Audrey Loan
+ * --
+*/
+
 class Player {
     constructor(x, y) {
         this.x = x;
@@ -133,9 +140,7 @@ class Player {
             let deepness = waterLevel - grid[l[0]][l[1]];
             this.health -= deepness / 7.5 + 0.005;
         } else {
-            // UNCOMMENT THAT TO REVERT BACK TO HEALTH LOSS ON ICE
             // this.health += 0.0015 - waterLevel / 100;
-            // comment this though
             if (0.0015 - waterLevel / 100 > 0) this.health += 0.0015 - waterLevel / 100;
             this.score++;
         }

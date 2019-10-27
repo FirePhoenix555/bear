@@ -1,3 +1,10 @@
+/*
+ * --
+ * Alex Loan
+ * Audrey Loan
+ * --
+*/
+
 require("dotenv").config();
 
 const express = require('express');

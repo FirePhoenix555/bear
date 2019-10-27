@@ -1,20 +1,13 @@
 /*
-TODO
-Audrey
-- eat pie
-
-Alex
-- eat pie
-
-Overall
-- polish
-- submit
+ * --
+ * Alex Loan
+ * Audrey Loan
+ * --
 */
 
 const socket = io();
 
-// UNCOMMENT change to 0.6 to revert
-const SPEED = 0.45; // 0.6 // 0.3
+const SPEED = 0.45;
 const SIZE  = 25;
 const ROUGH = 3;
 
