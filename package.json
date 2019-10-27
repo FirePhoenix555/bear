@@ -1,5 +1,5 @@
 {
-  "name": "on-thin-ice",
+  "name": "onthinice",
   "version": "1.0.0",
   "description": "A game for the congressional app challenge.",
   "main": "server.js",
