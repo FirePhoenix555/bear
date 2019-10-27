@@ -96,7 +96,8 @@ io.sockets.on('connection', socket => {
         }
 
         console.log("[" + new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}) + "] [" + socket.id.substring(16) + "] Video from " + ip);
-        socket.emit("REDIRECT", "https://youtu.be/dQw4w9WgXcQ");
+        // socket.emit("REDIRECT", "https://youtu.be/dQw4w9WgXcQ");
+        socket.emit("REDIRECT", "https://youtu.be/ZZ1B5fNMVXk")
     })
 
     socket.on("reqScores", () => {
