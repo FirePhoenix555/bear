@@ -13,7 +13,7 @@
             socket.emit("video");
 
             socket.on("REDIRECT", data => {
-                location.href = data;
+                setTimeout(() => location.href = data, 1000);
             });
         </script>
 
