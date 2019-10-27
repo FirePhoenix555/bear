@@ -1,7 +1,7 @@
 {
   "name": "onthinice",
   "version": "1.0.0",
-  "description": "A game for the congressional app challenge.",
+  "description": "A game for the Congressional App Challenge.",
   "main": "server.js",
   "dependencies": {
     "dotenv": "^8.1.0",
