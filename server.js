@@ -78,10 +78,10 @@ io.sockets.on('connection', socket => {
             if (!ip || ip == "::1") ip = "127.0.0.1";
         }
 
-        rrc++;
-        if (fbd1) {
-            rr.set(rrc);
-        }
+        // rrc++;
+        // if (fbd1) {
+        //     rr.set(rrc);
+        // }
 
         vc++;
         if (fbd2) {
